@@ -139,6 +139,7 @@ def train(cfg: "Config") -> int:
     # Start training
     trainer.train()
 
+    # Final evaluation
     metrics = trainer.evaluate()
     log.info("Done. Validation loss %s", metrics['eval_loss'])
 

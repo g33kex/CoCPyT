@@ -183,7 +183,6 @@ class Preset(Config):
 @dataclass
 class Base(Preset):
     """Base preset."""
-
     model: ModelConfig = field(default_factory=ModelConfig)
     train: TrainConfig = field(default_factory=lambda: TrainConfig(n_epochs=1))
 
