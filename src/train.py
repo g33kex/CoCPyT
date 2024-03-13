@@ -12,7 +12,6 @@ def train(cfg: "Config") -> int:
     log.info("Loading Python modules...")
     if "comet" in cfg:
         import comet_ml
-        from comet_ml.integration.pytorch import watch
         from src.callbacks import CometCallback 
     import torch
     import random
@@ -20,7 +19,7 @@ def train(cfg: "Config") -> int:
     from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments
     from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model
     from trl import SFTTrainer
-    from src.data import load_dataset, format_instruction, format_question
+    from src.data import load_dataset, format_instruction
     from src.callbacks import GenerationCallback 
     import warnings
 
@@ -79,22 +78,16 @@ def train(cfg: "Config") -> int:
     tokenizer.padding_side = 'right'
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.add_bos_token = False
+    tokenizer.add_eos_token = False
+    tokenizer.chat_template = cfg.model.chat_template
 
     peft_config = LoraConfig(
-        r=32,
-        lora_alpha=64,
-        target_modules=[
-            "q_proj",
-            "k_proj",
-            "v_proj",
-            "o_proj",
-            "gate_proj",
-            "up_proj",
-            "down_proj",
-            "lm_head",
-        ],
-        bias="none",
-        lora_dropout=0.05,
+        r=cfg.train.lora_rank,
+        lora_alpha=cfg.train.lora_alpha,
+        use_rslora=cfg.train.rslora,
+        target_modules=list(cfg.train.lora_target_modules),
+        bias=cfg.train.lora_bias,
+        lora_dropout=cfg.train.lora_dropout,
         task_type="CAUSAL_LM",
     )
 
@@ -102,25 +95,26 @@ def train(cfg: "Config") -> int:
     model = get_peft_model(model, peft_config)
 
     # Generate completions at evaluation step
-    callbacks.append(GenerationCallback(tokenizer, model, dataset['test'], comet_experiment))
+    callbacks.append(GenerationCallback(tokenizer, model, dataset['test'], comet_experiment, num_samples=3))
 
     model_args = TrainingArguments(
-        output_dir=cfg.experiment.checkpoints_path,
+        learning_rate=cfg.train.base_lr*np.sqrt(cfg.data.batch_size),
         num_train_epochs=cfg.train.n_epochs,
         per_device_train_batch_size=cfg.data.batch_size,
-        gradient_accumulation_steps=2,
-        gradient_checkpointing=True,
-        optim="paged_adamw_32bit",
-        logging_steps=1,
-        save_total_limit=3,
-        save_strategy="epoch",
-        evaluation_strategy="epoch",
-        learning_rate=cfg.train.base_lr,
+        gradient_accumulation_steps=cfg.train.gradient_accumulation_steps,
+        gradient_checkpointing=cfg.train.gradient_checkpointing,
+        optim=cfg.train.optim,
         bf16=True,
         tf32=True,
-        max_grad_norm=0.3,
-        warmup_ratio=0.03,
-        lr_scheduler_type="constant",
+        max_grad_norm=cfg.train.max_grad_norm,
+        warmup_ratio=cfg.train.warmup_ratio,
+        lr_scheduler_type=cfg.train.lr_scheduler_type,
+        output_dir=cfg.experiment.checkpoints_path,
+        logging_steps=1,
+        evaluation_strategy="steps",
+        eval_steps=0.2,
+        save_steps=0.2,
+        save_total_limit=3,
         disable_tqdm=False,
         report_to="none",
         load_best_model_at_end=True,
@@ -131,17 +125,17 @@ def train(cfg: "Config") -> int:
         train_dataset=dataset['train'],
         eval_dataset=dataset['test'],
         peft_config=peft_config,
-        max_seq_length=1024,
+        max_seq_length=cfg.data.max_seq_length,
         args=model_args,
         tokenizer=tokenizer,
-        formatting_func=format_instruction,
+        formatting_func=lambda sample: format_instruction(sample, tokenizer),
         packing=True,
         callbacks=callbacks,
     )
 
     # Initial evaluation
     trainer.evaluate()
-    
+
     # Start training
     trainer.train()
 

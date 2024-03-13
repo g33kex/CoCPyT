@@ -1,13 +1,11 @@
 from transformers import TrainingArguments, TrainerCallback, TrainerState, TrainerControl
 import torch
-from src.data import format_question
-
 class GenerationCallback(TrainerCallback):
     """A custom callback that generates text completions at the end of each evaluation phase."""
-    def __init__(self, tokenizer, model, eval_dataset, comet_experiment=None, start_sample=10, num_samples=5, max_new_tokens=200):
+    def __init__(self, tokenizer, model, eval_dataset, comet_experiment=None, num_samples=5, max_new_tokens=200):
         self.tokenizer = tokenizer
         self.model = model
-        self.eval_dataset = eval_dataset.select(range(start_sample, start_sample+num_samples))
+        self.eval_dataset = eval_dataset.shuffle().select(range(num_samples))
         self.max_new_tokens = max_new_tokens
         self.comet_experiment = comet_experiment
 
@@ -17,7 +15,11 @@ class GenerationCallback(TrainerCallback):
         self.model.eval()  # Ensure the model is in evaluation mode
 
         for sample in self.eval_dataset:
-            prompt = format_question(sample['conversations'][0]['value'])
+            if sample['conversations'][0]['from'] == 'system':
+                conversations = sample['conversations'][0:2]
+            else:
+                conversations = [sample['conversations'][0]]
+            prompt = self.tokenizer.apply_chat_template(conversations, tokenize=False, add_generation_prompt=True)
             completion = self.generate_completion(prompt, device)
             print(f"Completion: {completion}\n")
             if self.comet_experiment is not None:
@@ -38,7 +40,7 @@ class GenerationCallback(TrainerCallback):
                 pad_token_id=self.tokenizer.pad_token_id
             )
 
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return self.tokenizer.decode(outputs[0], skip_special_tokens=False)
 
 class CometCallback(TrainerCallback):
     """Custom comet callback."""
