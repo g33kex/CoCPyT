@@ -35,11 +35,15 @@ cd ${REPO_PATH}
 echo "===== Checking out ${CURRENT_BRANCH} ====="
 git checkout "${CURRENT_BRANCH}"
 echo "===== Setting up environment ====="
+if [ ! -f "${VENV_TAR_PATH}" ]; then
+    echo "Couldn't find ${VENV_TAR_PATH}. Please initialize the environment by running create_venv.sh on the cluster."
+    exit 1
+fi
 source setup_environment.sh
 echo '===== Starting "${COMMAND}" at date  $(date '+%Y-%m-%d %H:%M:%S') =====' >> "${LOG_FILE}"
 nohup unbuffer ${COMMAND} >> "${LOG_FILE}" 2>&1 &
 EOF
 
-echo "===== Now tailing ${LOG_FILE} ====="
+echo "===== Now tailing ${LOG_PATH} ====="
 
-ssh -T "$HOST" "tail -F ${REPO_PATH}/${LOG_FILE}" 
+ssh -T "$HOST" "tail -F ${LOG_PATH}" 
