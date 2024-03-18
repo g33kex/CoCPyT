@@ -3,8 +3,8 @@
 ## Settings
 # Name of the repository (change this to the name of your project)
 REPO_NAME="CCpipeline"
-# Which modules to load (change this if you need other modules)
-MODULES="python/3.11 StdEnv/2023 arrow cuda httpproxy"
+# Which modules to load (change this if you need other modules or versions)
+MODULES="python/3.11.5 StdEnv/2023 arrow/15.0.1 cuda/12.2 httpproxy/1.0"
 
 ## Default paths (change only if you know what you're doing)
 # Where to store the git repo on CC
