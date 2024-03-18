@@ -6,6 +6,7 @@ source config.sh # User config
 
 echo "===== Loading modules ====="
 module load ${MODULES}
+module unload "http_proxy" # http_proxy doesn't work on login nodes
 echo "===== Creating python virtual environment ====="
 mkdir -p "${VENV_PATH}"
 virtualenv --no-download "${VENV_PATH}/venv"
