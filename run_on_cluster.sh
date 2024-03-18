@@ -5,7 +5,7 @@ source config.sh # User config
 
 # Handle arguments
 if [ "$#" -lt 1 ]; then
-    echo "Usage: run_on_cluster.sh [host] <parameters for main.py>"
+    echo -e "Usage: run_on_cluster.sh [--sync-only] <host> [parameters for main.py]\nSpecify <host> as the target host.\n--sync-only: Only synchronize the git repository, don't run main."
     exit 1
 fi
 

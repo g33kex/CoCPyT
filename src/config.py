@@ -61,7 +61,7 @@ class SlurmConfig:
     artifacts_folder: Path = Path(
         "artifacts"
     )  # Where to store the run artifacts. (logs, pickles)
-    timeout_min: int = 6 * 60  # Max duration of job in minutes.
+    timeout_min: int = 60  # Max duration of job in minutes.
     mem_gb: int = 80  # Memory to allocate to each job in GB.
     cpus_per_task: int = 16  # Number of cpu per task.
     gpus_per_task: int = 1  # Number of gpus per task.
@@ -73,21 +73,22 @@ class SlurmConfig:
 @dataclass
 class DataConfig:
     """Data configuration."""
-    dataset_path: Path = Path("data/openhermes2_5.json") # Path of the dataset
-    batch_size: int = 4 # Batch size
-    test_size: float = 0.2 # Proportion of data in test set
-    nb_samples: int = 1000 # Number of samples to extract from the dataset
-    max_seq_length: int = 2048 # Maximum sequence length for the ConstantLengthDataset
+
+    dataset_path: Path = Path("data/openhermes2_5.json")  # Path of the dataset
+    batch_size: int = 4  # Batch size
+    test_size: float = 0.2  # Proportion of data in test set
+    nb_samples: int = 1000  # Number of samples to extract from the dataset
+    max_seq_length: int = 2048  # Maximum sequence length for the ConstantLengthDataset
 
 
 @dataclass
 class TrainConfig:
     """Trainer configuration."""
 
-    n_epochs: int = 4 # Number of epochs
+    n_epochs: int = 4  # Number of epochs
     # Optimizer
-    optim: str = "paged_adamw_32bit" # Optimizer to use
-    base_lr: float = 5e-5 # Base learning rate
+    optim: str = "paged_adamw_32bit"  # Optimizer to use
+    base_lr: float = 5e-5  # Base learning rate
     # Gradients
     gradient_checkpointing: bool = True
     gradient_accumulation_steps: int = 2
@@ -99,7 +100,7 @@ class TrainConfig:
     lora_rank: int = 64
     lora_alpha: int = 16
     lora_dropout: float = 0.05
-    rslora: bool = False # Use Rank-Stabilized LoRA
+    rslora: bool = False  # Use Rank-Stabilized LoRA
     lora_target_modules: Tuple[str, ...] = (
         "q_proj",
         "k_proj",
@@ -109,8 +110,8 @@ class TrainConfig:
         "up_proj",
         "down_proj",
         "lm_head",
-    ) # Train all linear layers
-    lora_bias: str = "none" # Specify if bias should be trained
+    )  # Train all linear layers
+    lora_bias: str = "none"  # Specify if bias should be trained
     # Checkpoint to restore
     checkpoint: Optional[Path] = None
 
@@ -120,7 +121,7 @@ class ModelConfig:
     """Configuration of the model."""
 
     model_path: Path = Path("model/")
-    chat_template: str = r"{% for message in messages %}{{'<s>' + message['from'] + '\n' + message['value'] + '</s>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{'<s>assistant\n'}}{% endif %}" # Jinja2 template for ChatML
+    chat_template: str = r"{% for message in messages %}{{'<s>' + message['from'] + '\n' + message['value'] + '</s>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{'<s>assistant\n'}}{% endif %}"  # Jinja2 template for ChatML
     add_bos_token: bool = True
     add_eos_token: bool = False
 
@@ -183,6 +184,7 @@ class Preset(Config):
 @dataclass
 class Base(Preset):
     """Base preset."""
+
     model: ModelConfig = field(default_factory=ModelConfig)
     train: TrainConfig = field(default_factory=lambda: TrainConfig(n_epochs=1))
 
