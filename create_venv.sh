@@ -5,7 +5,7 @@ set -e # Exit on failure
 source config.sh # User config
 
 echo "===== Loading modules ====="
-module load "${MODULES}"
+module load ${MODULES}
 echo "===== Creating python virtual environment ====="
 mkdir -p "${VENV_PATH}"
 virtualenv --no-download "${VENV_PATH}/venv"
