@@ -1,6 +1,9 @@
+#!/bin/bash
 # Setup/update virtualenv (run this on the cluster from the repo directory)
 # venv is setup in tmp, then archived and copied back to scratch
+set -e # Exit on failure
 source config.sh # User config
+
 echo "===== Loading modules ====="
 module load "${MODULES}"
 echo "===== Creating python virtual environment ====="

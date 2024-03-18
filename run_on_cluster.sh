@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# Variables
+# Synchronize git repository and run main.py on the cluster with the right environment.
+set -e # Exit on failure
 source config.sh # User config
 
 # Handle arguments
@@ -9,6 +9,10 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
+if [ "$1" = "--sync-only" ]; then
+    SYNC_ONLY=true
+    shift
+fi
 HOST=$1
 COMMAND="python3 main.py ${@:2}"
 
@@ -30,15 +34,16 @@ echo "===== Pushing branch ${CURRENT_BRANCH} to ${REMOTE_NAME} ====="
 # Push the current branch to the remote server repository
 git push "${REMOTE_NAME}" "${CURRENT_BRANCH}" --force
 
+if [ "$SYNC_ONLY" = true ]; then
+    exit 0 
+fi
+
 ssh -T "${HOST}" << EOF
+set -e
 cd ${REPO_PATH}
 echo "===== Checking out ${CURRENT_BRANCH} ====="
 git checkout "${CURRENT_BRANCH}"
 echo "===== Setting up environment ====="
-if [ ! -f "${VENV_TAR_PATH}" ]; then
-    echo "Couldn't find ${VENV_TAR_PATH}. Please initialize the environment by running create_venv.sh on the cluster."
-    exit 1
-fi
 source setup_environment.sh
 echo '===== Starting "${COMMAND}" at date  $(date '+%Y-%m-%d %H:%M:%S') =====' >> "${LOG_FILE}"
 nohup unbuffer ${COMMAND} >> "${LOG_FILE}" 2>&1 &

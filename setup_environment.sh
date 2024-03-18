@@ -1,6 +1,12 @@
 # Makes sure venv is in TMP_PATH and up to date.
 # Runs automatically on login nodes and compute nodes when starting a job.
+set -e # Exit on failure
 source  config.sh # User config
+
+if [ ! -f "${VENV_TAR_PATH}" ]; then
+    echo "Couldn't find ${VENV_TAR_PATH}. Please initialize the environment by running create_venv.sh on the cluster."
+    exit 1
+fi
 
 echo "===== Loading modules ====="
 module load ${MODULES}
