@@ -107,7 +107,6 @@ prompt_toolkit==3.0.39+computecanada
 psutil==5.9.8
 ptyprocess==0.7.0+computecanada
 pure_eval==0.2.2+computecanada
-pyarrow @ file:///tmp/ebuser/avx512/Arrow/15.0.1/gcccorecuda-2023a/arrow/python
 pyarrow_hotfix==0.6+computecanada
 pycparser==2.21+computecanada
 pygments==2.17.2+computecanada
