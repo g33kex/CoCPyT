@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Run experiments."""
+
 import logging
 import os.path
 import sys
@@ -9,6 +10,7 @@ from submitit import AutoExecutor, Job
 from submitit.helpers import RsyncSnapshot
 from omegaconf import OmegaConf
 import hydra
+import nevergrad as ng
 
 from src.config import (
     Actions,
@@ -59,8 +61,12 @@ class ExperimentExecutor(Executor):
             slurm_setup=["source setup_environment.sh"],
         )
 
-    def submit(self, fn: Callable, cfg, *args, **kwargs) -> Job[Any]:
+    def submit(self, fn: Callable[..., Any], /, *args: Any, **kwargs: Any) -> Job[Any]:
         """Submit the experiment to slurm."""
+        if args:
+            cfg = args[0]
+        else:
+            raise ValueError("Missing first argument 'cfg'")
         # Create an experiment and add it to the config
         cfg = create_experiment(cfg)
         # Create logger with experiment name
@@ -78,11 +84,13 @@ class ExperimentExecutor(Executor):
         code_path = cfg.experiment.path.joinpath("code")
         code_path.mkdir(parents=True)
         code_path.joinpath("data").symlink_to(
-            os.path.relpath(cfg.data.data_folder, code_path)
+            os.path.relpath(cfg.data.dataset_path.parent, code_path)
         )
         with RsyncSnapshot(snapshot_dir=code_path):
             job = self.slurm_executor.submit(fn, cfg)
-        log.info(f"Submitted experiment {cfg.experiment.name} with job id {job.job_id}")
+        log.info(
+            "Submitted experiment %s with job id %s", cfg.experiment_name, job.job_id
+        )
 
         # Create log files symlinks
         log_files = [("error.log", job.paths.stderr), ("output.log", job.paths.stdout)]
@@ -94,19 +102,19 @@ class ExperimentExecutor(Executor):
         return job
 
 
-def run_single_experiment(cfg, fn):
+def run_single_experiment(cfg, fn) -> float:
     """Runs a single experiment, either traditionally or with submitit."""
     if "slurm" not in cfg:
         cfg = create_experiment(cfg)
         # Create logger with experiment name
         log = logging.getLogger(cfg.experiment.name)
         log.info("Running locally without submitit")
-        fn(cfg)
-    else:
-        executor = ExperimentExecutor(cfg.slurm)
-        job = executor.submit(fn, cfg)
-        output = job.result()
-        return output
+        return fn(cfg)
+
+    executor = ExperimentExecutor(cfg.slurm)
+    job = executor.submit(fn, cfg)
+    output = job.result()
+    return output
 
 
 def print_cfg(cfg: Config) -> None:
@@ -117,8 +125,6 @@ def print_cfg(cfg: Config) -> None:
 
 def hyperparameter_tuning(cfg: Config) -> None:
     """Tune hyperparameters with nevergrad."""
-
-    import nevergrad as ng
 
     executor = ExperimentExecutor(cfg.slurm)
     instrumentation = build_instrumentation(cfg)
