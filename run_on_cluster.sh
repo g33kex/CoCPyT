@@ -51,4 +51,4 @@ EOF
 
 echo "===== Now tailing ${LOG_PATH} ====="
 
-ssh -T "$HOST" "tail -F ${LOG_PATH}" 
+ssh -T "$HOST" "tail -n 0 -F ${LOG_PATH}" 

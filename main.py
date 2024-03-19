@@ -49,7 +49,7 @@ class ExperimentExecutor(Executor):
 
     def __init__(self, cfg: SlurmConfig):
         super().__init__()
-        self.slurm_executor = AutoExecutor(folder=None)
+        self.slurm_executor = AutoExecutor(folder="./")
         self.slurm_executor.update_parameters(
             timeout_min=cfg.timeout_min,
             mem_gb=cfg.mem_gb,
@@ -79,7 +79,7 @@ class ExperimentExecutor(Executor):
 
         # Set job name and path
         self.slurm_executor.update_parameters(name=cfg.experiment.name)
-        self.slurm_executor.folder = str(cfg.experiment.path)
+        self.slurm_executor.folder = cfg.experiment.path
 
         # Create relative symlinks for large files not in git
         code_path = cfg.experiment.path.joinpath("code")
