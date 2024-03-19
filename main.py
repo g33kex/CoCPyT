@@ -51,8 +51,8 @@ class ExperimentExecutor(Executor):
         super().__init__()
         self.slurm_executor = SlurmExecutor(folder=".")
         self.slurm_executor.update_parameters(
-            time=cfg.timeout_min,
-            mem=cfg.mem_gb,
+            time=cfg.time,
+            mem=cfg.mem,
             cpus_per_task=cfg.cpus_per_task,
             gpus_per_node=cfg.gpus_per_node,
             gpus_per_task=cfg.gpus_per_task,
