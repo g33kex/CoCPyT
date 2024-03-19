@@ -89,7 +89,7 @@ class ExperimentExecutor(Executor):
         with RsyncSnapshot(snapshot_dir=code_path):
             job = self.slurm_executor.submit(fn, cfg)
         log.info(
-            "Submitted experiment %s with job id %s", cfg.experiment_name, job.job_id
+            "Submitted experiment %s with job id %s", cfg.experiment.name, job.job_id
         )
 
         # Create log files symlinks
