@@ -49,7 +49,7 @@ class ExperimentExecutor(Executor):
 
     def __init__(self, cfg: SlurmConfig):
         super().__init__()
-        self.slurm_executor = AutoExecutor()
+        self.slurm_executor = AutoExecutor(folder=None)
         self.slurm_executor.update_parameters(
             timeout_min=cfg.timeout_min,
             mem_gb=cfg.mem_gb,
