@@ -9,7 +9,7 @@ if [ ! -f "${VENV_TAR_PATH}" ]; then
 fi
 
 echo "===== Loading modules ====="
-module reset
+module purge
 module load ${MODULES}
 echo "===== Checking venv for updates ====="
 current_checksum=$(md5sum "${VENV_TAR_PATH}" | cut -d ' ' -f 1)
