@@ -63,7 +63,7 @@ class SlurmConfig:
     timeout_min: int = 60  # Max duration of job in minutes.
     mem_gb: int = 80  # Memory to allocate to each job in GB.
     cpus_per_task: int = 16  # Number of cpu per task.
-    gpus_per_task: int = 1  # Number of gpus per task.
+    gpus_per_task: Optional[int] = 1  # Number of gpus per task.
     gpus_per_node: Optional[int] = None  # Number of gpus per node.
     ntasks_per_node: int = 1  # Number of tasks on each node.
     account: Optional[str] = None  # Account to use for allocation
