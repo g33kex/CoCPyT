@@ -45,8 +45,8 @@ echo "===== Checking out ${CURRENT_BRANCH} ====="
 git checkout "${CURRENT_BRANCH}"
 echo "===== Setting up environment ====="
 source setup_environment.sh
-echo '===== Starting "${COMMAND}" at date  $(date '+%Y-%m-%d %H:%M:%S') =====' >> "${LOG_FILE}"
-nohup unbuffer ${COMMAND} >> "${LOG_FILE}" 2>&1 &
+echo '===== Starting "${COMMAND}" at date  $(date '+%Y-%m-%d %H:%M:%S') =====' >> "${LOG_PATH}"
+nohup unbuffer ${COMMAND} >> "${LOG_PATH}" 2>&1 &
 EOF
 
 echo "===== Now tailing ${LOG_PATH} ====="
