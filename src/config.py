@@ -60,7 +60,7 @@ class CometConfig:
 @dataclass
 class SlurmConfig:
     """SLURM job configuration."""
-    time: int = 60  # Max duration of job in minutes.
+    time: int = 120  # Max duration of job in minutes.
     mem: int = 80000  # Memory to allocate to each job in MB.
     cpus_per_task: int = 16  # Number of cpu per task.
     gpus_per_task: Optional[int] = 1  # Number of gpus per task.
