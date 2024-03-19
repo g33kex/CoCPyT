@@ -49,7 +49,7 @@ class ExperimentExecutor(Executor):
 
     def __init__(self, cfg: SlurmConfig):
         super().__init__()
-        self.slurm_executor = AutoExecutor(folder=cfg.artifacts_folder / "%j")
+        self.slurm_executor = AutoExecutor()
         self.slurm_executor.update_parameters(
             timeout_min=cfg.timeout_min,
             mem_gb=cfg.mem_gb,
@@ -77,15 +77,19 @@ class ExperimentExecutor(Executor):
         for key, value in kwargs.items():
             OmegaConf.update(cfg, key, value, merge=True)
 
-        # Set job name
+        # Set job name and path
         self.slurm_executor.update_parameters(name=cfg.experiment.name)
+        self.slurm_executor.folder = str(cfg.experiment.path)
 
-        # Create data symlink
+        # Create relative symlinks for large files not in git
         code_path = cfg.experiment.path.joinpath("code")
         code_path.mkdir(parents=True)
-        code_path.joinpath("data").symlink_to(
-            os.path.relpath(cfg.data.dataset_path.parent, code_path)
-        )
+        for path in cfg.experiment.symlink_paths:
+            link_path = code_path / path
+            link_path.parent.mkdir(parents=True)
+            link_path.symlink_to(os.path.relpath(link_path, code_path))
+
+        # Take snapshot of commited files and submit job
         with RsyncSnapshot(snapshot_dir=code_path):
             job = self.slurm_executor.submit(fn, cfg)
         log.info(
@@ -93,11 +97,11 @@ class ExperimentExecutor(Executor):
         )
 
         # Create log files symlinks
-        log_files = [("error.log", job.paths.stderr), ("output.log", job.paths.stdout)]
-        for log_file, target_path in log_files:
-            symlink_path = cfg.experiment.path.joinpath(log_file)
-            tgt = os.path.relpath(target_path, cfg.experiment.path)
-            symlink_path.symlink_to(tgt)
+        # log_files = [("error.log", job.paths.stderr), ("output.log", job.paths.stdout)]
+        # for log_file, target_path in log_files:
+        #     symlink_path = cfg.experiment.path.joinpath(log_file)
+        #     tgt = os.path.relpath(target_path, cfg.experiment.path)
+        #     symlink_path.symlink_to(tgt)
 
         return job
 
