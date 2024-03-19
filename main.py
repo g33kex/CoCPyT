@@ -71,7 +71,6 @@ class ExperimentExecutor(Executor):
         cfg = create_experiment(cfg)
         # Create logger with experiment name
         log = logging.getLogger(cfg.experiment.name)
-        log.info("Submitting experiment with overrides %s", kwargs)
 
         # Apply overrides to the config
         for key, value in kwargs.items():
