@@ -87,7 +87,7 @@ class ExperimentExecutor(Executor):
         for path in cfg.experiment.symlink_paths:
             link_path = code_path / path
             link_path.parent.mkdir(parents=True, exist_ok=True)
-            link_path.symlink_to(os.path.relpath(link_path, code_path))
+            link_path.symlink_to(os.path.relpath(path, code_path))
 
         # Take snapshot of commited files and submit job
         with RsyncSnapshot(snapshot_dir=code_path):
