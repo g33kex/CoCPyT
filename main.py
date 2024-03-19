@@ -6,7 +6,7 @@ import os.path
 import sys
 from concurrent.futures import Executor
 from typing import Any, Callable
-from submitit import AutoExecutor, Job
+from submitit import SlurmExecutor, Job
 from submitit.helpers import RsyncSnapshot
 from omegaconf import OmegaConf
 import hydra
@@ -49,16 +49,16 @@ class ExperimentExecutor(Executor):
 
     def __init__(self, cfg: SlurmConfig):
         super().__init__()
-        self.slurm_executor = AutoExecutor(folder="./")
+        self.slurm_executor = SlurmExecutor(folder=".")
         self.slurm_executor.update_parameters(
-            timeout_min=cfg.timeout_min,
-            mem_gb=cfg.mem_gb,
+            time=cfg.timeout_min,
+            mem=cfg.mem_gb,
             cpus_per_task=cfg.cpus_per_task,
             gpus_per_node=cfg.gpus_per_node,
-            slurm_gpus_per_task=cfg.gpus_per_task,
-            slurm_ntasks_per_node=cfg.ntasks_per_node,
-            slurm_account=cfg.account,
-            slurm_setup=["source setup_environment.sh"],
+            gpus_per_task=cfg.gpus_per_task,
+            ntasks_per_node=cfg.ntasks_per_node,
+            account=cfg.account,
+            setup=["source setup_environment.sh"],
         )
 
     def submit(self, fn: Callable[..., Any], /, *args: Any, **kwargs: Any) -> Job[Any]:
@@ -78,8 +78,8 @@ class ExperimentExecutor(Executor):
             OmegaConf.update(cfg, key, value, merge=True)
 
         # Set job name and path
-        self.slurm_executor.update_parameters(name=cfg.experiment.name)
-        self.slurm_executor.folder = cfg.experiment.path
+        self.slurm_executor.update_parameters(job_name=cfg.experiment.name)
+        self.slurm_executor.folder = cfg.experiment.path.expanduser().absolute()
 
         # Create relative symlinks for large files not in git
         code_path = cfg.experiment.path.joinpath("code")
