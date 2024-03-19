@@ -16,5 +16,5 @@ pip install --no-index --upgrade pip
 pip install --no-deps -r "${REQS_PATH}"
 echo "===== Packaging venv ====="
 deactivate
-tar -czf "${VENV_TAR_PATH}" "${VENV_PATH}/venv"
+tar -czf "${VENV_TAR_PATH}" -C "${VENV_PATH}" "venv"
 echo "===== Finished! ====="
