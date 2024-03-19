@@ -16,6 +16,7 @@ bayesian_optimization==1.4.3+computecanada
 bcrypt==4.0.1+computecanada
 beautifulsoup4==4.12.2+computecanada
 bitarray==2.8.1+computecanada
+bitsandbytes==0.42.0+computecanada
 bitstring==4.1.1+computecanada
 bleach==6.0.0+computecanada
 certifi==2023.7.22+computecanada
