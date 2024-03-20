@@ -104,7 +104,7 @@ def train(cfg: "Config") -> int:
         gradient_checkpointing=cfg.train.gradient_checkpointing,
         optim=cfg.train.optim,
         bf16=cfg.train.bf16,
-        tf32=True,
+        tf32=cfg.train.tf32,
         max_grad_norm=cfg.train.max_grad_norm,
         warmup_ratio=cfg.train.warmup_ratio,
         lr_scheduler_type=cfg.train.lr_scheduler_type,

@@ -109,7 +109,8 @@ class TrainConfig:
     )  # Train all linear layers
     lora_bias: str = "none"  # Specify if bias should be trained
     # GPU
-    bf16: bool = False
+    bf16: bool = False # Only works on Ampere GPUs or newer
+    tf32: bool = False # Only works on Ampere GPUs or newer
     # Checkpoint to restore
     checkpoint: Optional[Path] = None
 
