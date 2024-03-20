@@ -73,7 +73,7 @@ class SlurmConfig:
 class DataConfig:
     """Data configuration."""
     dataset_path: Path = Path("data/openhermes2_5.json")  # Path of the dataset
-    batch_size: int = 4  # Batch size
+    batch_size: int = 2  # Batch size
     test_size: float = 0.2  # Proportion of data in test set
     nb_samples: int = 1000  # Number of samples to extract from the dataset
     max_seq_length: int = 2048  # Maximum sequence length for the ConstantLengthDataset
