@@ -103,7 +103,7 @@ def train(cfg: "Config") -> int:
         gradient_accumulation_steps=cfg.train.gradient_accumulation_steps,
         gradient_checkpointing=cfg.train.gradient_checkpointing,
         optim=cfg.train.optim,
-        bf16=True,
+        bf16=cfg.train.bf16,
         tf32=True,
         max_grad_norm=cfg.train.max_grad_norm,
         warmup_ratio=cfg.train.warmup_ratio,

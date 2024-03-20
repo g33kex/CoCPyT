@@ -108,6 +108,8 @@ class TrainConfig:
         "lm_head",
     )  # Train all linear layers
     lora_bias: str = "none"  # Specify if bias should be trained
+    # GPU
+    bf16: bool = False
     # Checkpoint to restore
     checkpoint: Optional[Path] = None
 
