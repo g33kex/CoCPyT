@@ -84,7 +84,6 @@ def train(cfg: "Config") -> int:
     peft_config = LoraConfig(
         r=cfg.train.lora_rank,
         lora_alpha=cfg.train.lora_alpha,
-        use_rslora=cfg.train.rslora,
         target_modules=list(cfg.train.lora_target_modules),
         bias=cfg.train.lora_bias,
         lora_dropout=cfg.train.lora_dropout,

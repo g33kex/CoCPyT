@@ -97,7 +97,6 @@ class TrainConfig:
     lora_rank: int = 64
     lora_alpha: int = 16
     lora_dropout: float = 0.05
-    rslora: bool = False  # Use Rank-Stabilized LoRA
     lora_target_modules: Tuple[str, ...] = (
         "q_proj",
         "k_proj",
