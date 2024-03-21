@@ -1,4 +1,4 @@
-# CoCPyT Template
+# CoCPyT
 
 This is a Python project template to easily run experiments on [Compute Canada](https://alliancecan.ca/en) clusters.
 
