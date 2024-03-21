@@ -12,7 +12,7 @@ This template shows as an example how to fine-tune [Mistral 7B](https://huggingf
 
 ## Template structure
 
-This section describes the structure of the CoCPyT template.
+This section describes the structure of CoCPyT.
 
 ```
 ├── README.md # This file
