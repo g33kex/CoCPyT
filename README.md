@@ -1,8 +1,8 @@
-## CCpipeline Template
+# CoCPyT Template
 
-This is a Python project template to easily run experiments on [Compute Canada](https://alliancecan.ca/en) clusters. See [Usage](#usage).
+This is a Python project template to easily run experiments on [Compute Canada](https://alliancecan.ca/en) clusters.
 
-Experiment parameters can be set with strongly-typed structured configuration using [hydra](https://hydra.cc/) and overwritten from the command-line. See [configuration](#configuration).
+Experiment parameters can be set with strongly-typed structured configuration using [hydra](https://hydra.cc/) and overwritten from the command-line.
 
 Jobs on the SLURM cluster are started from Python with [submitit](https://github.com/facebookincubator/submitit) which allows automated hyper parameter tuning with [nevergrad](https://facebookresearch.github.io/nevergrad/).
 
@@ -12,7 +12,7 @@ This template shows as an example how to fine-tune [Mistral 7B](https://huggingf
 
 ## Template structure
 
-This section describes the structure of the CCpipeline template.
+This section describes the structure of the CoCPyT template.
 
 ```
 ├── README.md # This file
@@ -98,7 +98,7 @@ It can be a bit difficult to find the right versions of the Python modules that 
 2. Connect via ssh to the cluster, load the modules and create a new Python virtual environment in `/tmp`:
     ```bash
     ssh beluga
-    cd ~/scratch/CCpipeline
+    cd ~/scratch/CoCPyT
     source config.sh
     module load $MODULES
     virtualenv --no-download /tmp/$USER/venv
@@ -181,7 +181,7 @@ Follow these instructions to fine-tune Mistral on beluga.
 
 1. Clone this project locally on your machine.
     ```bash
-    git clone https://github.com/g33kex/CCpipeline
+    git clone https://github.com/g33kex/CoCPyT
     ```
 2. Make sure you have [setup your SSH connection](#configure-ssh) to beluga.
 3. Copy the project over to beluga.

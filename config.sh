@@ -1,8 +1,8 @@
-# This is the configuration file for CCpipeline
+# This is the configuration file for CoCPyT
 
 ## Settings
 # Name of the repository (change this to the name of your project)
-REPO_NAME="CCpipeline"
+REPO_NAME="CoCPyT"
 # Which modules to load (change this if you need other modules or versions)
 MODULES="StdEnv/2023 python/3.11.5 arrow/15.0.1 cuda/12.2 httpproxy/1.0"
 
