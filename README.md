@@ -213,4 +213,18 @@ Submit a fine-tuning job to SLURM directly from your local machine:
 ```bash
 ./run_on_cluster.sh beluga +action=train +preset=base/run_on_cluster.sh beluga +action=train +preset=base
 ```
+## License
 
+Copyright (C) 2024 g33kex, Kkameleon, ran-ya, yberreby
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+We are not affiliated with the Digital Research Alliance of Canada.
