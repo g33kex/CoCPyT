@@ -183,7 +183,7 @@ Follow these instructions to fine-tune Mistral on beluga.
     ```bash
     git clone https://github.com/g33kex/CoCPyT
     ```
-2. Make sure you have [setup your SSH connection](#configure-ssh) to beluga.
+2. Make sure you have [setup your SSH connection](#ssh-configuration) to beluga.
 3. Copy the project over to beluga.
     ```bash
     ./run_on_cluster.sh --sync-only beluga
