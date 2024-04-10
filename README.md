@@ -79,7 +79,7 @@ In order to run your Python project on Compute Canada, you need to configure the
 
 #### Configure the modules
 
-Python versions and certain dependencies like cuda are managed by modules on Compute Canada. The modules can be configured in `config.sh`. For instance, the default modules below are suitable for running a machine learning project with cuda and Python 3.11.5. The `httpproxy` module is required for comet. You can find a list of available modules [here](https://docs.alliancecan.ca/wiki/Available_software#List_of_globally-installed_modules).
+Python versions and certain dependencies like CUDA are managed by modules on Compute Canada. The modules can be configured in `config.sh`. For instance, the default modules below are suitable for running a machine learning project with CUDA and Python 3.11.5. The `httpproxy` module is required for comet. You can find a list of available modules [here](https://docs.alliancecan.ca/wiki/Available_software#List_of_globally-installed_modules).
 
 ```bash
 MODULES="StdEnv/2023 python/3.11.5 arrow/15.0.1 cuda/12.2 httpproxy/1.0"
