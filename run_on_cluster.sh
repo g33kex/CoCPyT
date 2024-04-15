@@ -33,16 +33,17 @@ CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 echo "===== Pushing branch ${CURRENT_BRANCH} to ${REMOTE_NAME} ====="
 # Push the current branch to the remote server repository
 git push "${REMOTE_NAME}" "${CURRENT_BRANCH}" --force
+# Checkout the current branch
+ssh -T "${HOST}" "git -C ${REPO_PATH} checkout ${CURRENT_BRANCH}"
 
 if [ "$SYNC_ONLY" = true ]; then
     exit 0 
 fi
 
+# Run command
 ssh -T "${HOST}" << EOF
 set -e
 cd ${REPO_PATH}
-echo "===== Checking out ${CURRENT_BRANCH} ====="
-git checkout "${CURRENT_BRANCH}"
 echo "===== Setting up environment ====="
 source setup_environment.sh
 echo '===== Starting "${COMMAND}" at date  $(date '+%Y-%m-%d %H:%M:%S') =====' >> "${LOG_PATH}"
