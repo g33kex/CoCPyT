@@ -179,40 +179,37 @@ If you want to run your job in an interactive `salloc` session, add `~slurm` to 
 
 Follow these instructions to fine-tune Mistral on beluga.
 
-1. Clone this project locally on your machine.
+1. Clone this project locally on your machine:
     ```bash
     git clone https://github.com/g33kex/CoCPyT
     ```
 2. Make sure you have [setup your SSH connection](#configure-ssh) to beluga.
-3. Copy the project over to beluga.
+3. Copy the project over to beluga:
     ```bash
     ./run_on_cluster.sh --sync-only beluga
     ```
-
-Then, connect to beluga via ssh and [build the virtual environment](#build-the-virtual-environment). You can use the default `requirements_cluster.txt` file that has been generated for this example:
-```bash
-./create_venv.sh
-```
-
-If you don't have it already, install the Hugging Face Hub module.
-```bash
-pip install --no-index huggingface_hub
-```
-
-Download the model:
-```bash
-huggingface-cli download mistralai/Mistral-7B-v0.1 --local-dir model
-```
-
-Download the dataset:
-```bash
-huggingface-cli download --repo-type dataset teknium/OpenHermes-2.5 --local-dir data
-```
-
-Submit a fine-tuning job to SLURM directly from your local machine:
-```bash
-./run_on_cluster.sh beluga +action=train +preset=base/run_on_cluster.sh beluga +action=train +preset=base
-```
+3. Connect to beluga via ssh and [build the virtual environment](#build-the-virtual-environment). You can use the default `requirements_cluster.txt` file that has been generated for this example:
+    ```bash
+    ./create_venv.sh
+    ```
+4. If you don't have it already, install the Hugging Face Hub module:
+    ```bash
+    module load python
+    pip install --no-index huggingface_hub
+    ```
+5. Download the model:
+    ```bash
+    huggingface-cli download mistralai/Mistral-7B-v0.1 --local-dir model
+    ```
+6. Download the dataset:
+    ```bash
+    huggingface-cli download --repo-type dataset teknium/OpenHermes-2.5 --local-dir data
+    ```
+7. Submit a fine-tuning job to SLURM directly from your local machine:
+    ```bash
+    ./run_on_cluster.sh beluga +action=train +preset=base
+    ```
+    
 ## License
 
 Copyright (C) 2024 g33kex, Kkameleon, ran-ya, yberreby
