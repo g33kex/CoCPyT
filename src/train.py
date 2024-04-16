@@ -1,4 +1,6 @@
 """Train the model."""
+
+
 # Using a String-based type annotation in order to avoid importing anything
 # outside of this function.
 def train(cfg: "Config") -> int:
@@ -12,19 +14,30 @@ def train(cfg: "Config") -> int:
     log.info("Loading Python modules...")
     if "comet" in cfg:
         import comet_ml
-        from src.callbacks import CometCallback 
+        from src.callbacks import CometCallback
     import torch
     import random
     import numpy as np
-    from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments
+    from transformers import (
+        AutoTokenizer,
+        AutoModelForCausalLM,
+        BitsAndBytesConfig,
+        TrainingArguments,
+    )
     from peft import LoraConfig, prepare_model_for_kbit_training, get_peft_model
     from trl import SFTTrainer
     from src.data import load_dataset, format_instruction
-    from src.callbacks import GenerationCallback 
+    from src.callbacks import GenerationCallback
     import warnings
 
-    warnings.filterwarnings("ignore", message="torch.utils.checkpoint: please pass in use_reentrant=True or use_reentrant=False explicitly.")
-    warnings.filterwarnings("ignore", message="Setting `save_embedding_layers` to `True` as embedding layers found in `target_modules`.")
+    warnings.filterwarnings(
+        "ignore",
+        message="torch.utils.checkpoint: please pass in use_reentrant=True or use_reentrant=False explicitly.",
+    )
+    warnings.filterwarnings(
+        "ignore",
+        message="Setting `save_embedding_layers` to `True` as embedding layers found in `target_modules`.",
+    )
 
     log.info("Finished loading Python modules.")
 
@@ -46,7 +59,6 @@ def train(cfg: "Config") -> int:
     if "comet" in cfg:
         comet_experiment = comet_ml.Experiment(
             project_name=cfg.comet.project,
-            workspace=cfg.comet.workspace,
         )
         comet_experiment.set_name(cfg.experiment.name)
         comet_experiment.log_parameters(hyprparams)
@@ -75,7 +87,7 @@ def train(cfg: "Config") -> int:
 
     model.config.pretraining_tp = 1
     tokenizer = AutoTokenizer.from_pretrained(str(cfg.model.model_path))
-    tokenizer.padding_side = 'right'
+    tokenizer.padding_side = "right"
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.add_bos_token = False
     tokenizer.add_eos_token = False
@@ -94,10 +106,14 @@ def train(cfg: "Config") -> int:
     model = get_peft_model(model, peft_config)
 
     # Generate completions at evaluation step
-    callbacks.append(GenerationCallback(tokenizer, model, dataset['test'], comet_experiment, num_samples=3))
+    callbacks.append(
+        GenerationCallback(
+            tokenizer, model, dataset["test"], comet_experiment, num_samples=3
+        )
+    )
 
     model_args = TrainingArguments(
-        learning_rate=cfg.train.base_lr*np.sqrt(cfg.data.batch_size),
+        learning_rate=cfg.train.base_lr * np.sqrt(cfg.data.batch_size),
         num_train_epochs=cfg.train.n_epochs,
         per_device_train_batch_size=cfg.data.batch_size,
         gradient_accumulation_steps=cfg.train.gradient_accumulation_steps,
@@ -121,8 +137,8 @@ def train(cfg: "Config") -> int:
 
     trainer = SFTTrainer(
         model=model,
-        train_dataset=dataset['train'],
-        eval_dataset=dataset['test'],
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["test"],
         peft_config=peft_config,
         max_seq_length=cfg.data.max_seq_length,
         args=model_args,
@@ -140,6 +156,6 @@ def train(cfg: "Config") -> int:
 
     # Final evaluation
     metrics = trainer.evaluate()
-    log.info("Done. Validation loss %s", metrics['eval_loss'])
+    log.info("Done. Validation loss %s", metrics["eval_loss"])
 
-    return metrics['eval_loss']
+    return metrics["eval_loss"]
